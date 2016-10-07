@@ -1,4 +1,4 @@
-package client
+package org.thederps.client
 
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient

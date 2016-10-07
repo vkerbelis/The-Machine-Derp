@@ -1,5 +1,5 @@
-import client.ClientCreator
-import client.DiscordClientRetriever
+import org.thederps.client.ClientCreator
+import org.thederps.client.DiscordClientRetriever
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock

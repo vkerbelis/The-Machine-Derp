@@ -1,5 +1,7 @@
-import client.DiscordClientCreator
-import client.DiscordClientRetriever
+package org.thederps
+
+import org.thederps.client.DiscordClientCreator
+import org.thederps.client.DiscordClientRetriever
 
 /**
  * @author Vidmantas K. on 2016-10-07.

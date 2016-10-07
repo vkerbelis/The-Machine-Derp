@@ -1,4 +1,4 @@
-package client
+package org.thederps.client
 
 /**
  * @author Vidmantas on 2016-10-07.

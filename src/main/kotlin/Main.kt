@@ -4,6 +4,7 @@
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        BotController(args)
+        val authenticator = DiscordAuthenticator(args)
+        BotController(authenticator)
     }
 }

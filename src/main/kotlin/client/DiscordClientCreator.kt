@@ -1,3 +1,5 @@
+package client
+
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
 

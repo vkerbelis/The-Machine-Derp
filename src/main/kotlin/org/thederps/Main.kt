@@ -12,6 +12,8 @@ object Main {
         val clientCreator = DiscordClientCreator()
         val clientRetriever = DiscordClientRetriever(args, clientCreator)
         val authenticator = DiscordAuthenticator(clientRetriever)
-        BotController(authenticator)
+        val botController = BotController(authenticator)
+
+        botController.launch()
     }
 }

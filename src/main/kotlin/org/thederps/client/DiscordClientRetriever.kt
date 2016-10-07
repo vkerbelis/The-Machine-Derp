@@ -16,4 +16,6 @@ class DiscordClientRetriever(args: Array<String>, clientCreator: ClientCreator) 
             client = clientCreator.withToken(token)
         }
     }
+
+    override fun getClient() = client
 }

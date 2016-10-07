@@ -4,6 +4,6 @@
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        BotController()
+        BotController(args)
     }
 }

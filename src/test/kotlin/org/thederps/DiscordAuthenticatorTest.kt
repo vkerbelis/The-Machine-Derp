@@ -6,6 +6,7 @@ import org.mockito.Mockito.*
 import org.thederps.client.ClientRetriever
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventDispatcher
+import sx.blah.discord.handle.impl.events.MessageReceivedEvent
 import sx.blah.discord.handle.impl.events.ReadyEvent
 
 /**
@@ -44,5 +45,10 @@ class DiscordAuthenticatorTest {
     @Test
     fun testOnReady_passesWithoutException() {
         authenticator.onReady(mock(ReadyEvent::class.java))
+    }
+
+    @Test
+    fun testOnMessage_passesWithoutException() {
+        authenticator.onMessage(mock(MessageReceivedEvent::class.java))
     }
 }

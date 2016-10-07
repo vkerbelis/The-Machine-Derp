@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.thederps.client.ClientRetriever
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.ReadyEvent
+import sx.blah.discord.util.DiscordException
 
 /**
  * @author Vidmantas on 2016-10-07.
@@ -17,6 +18,7 @@ class DiscordAuthenticator(clientRetriever: ClientRetriever) : Authenticator {
         log = LoggerFactory.getLogger(DiscordAuthenticator::class.java)
     }
 
+    @Throws(DiscordException::class)
     override fun login() {
         client.login()
         client.dispatcher.registerListener(this)

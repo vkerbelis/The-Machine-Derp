@@ -1,3 +1,5 @@
+package org.thederps.client
+
 import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test

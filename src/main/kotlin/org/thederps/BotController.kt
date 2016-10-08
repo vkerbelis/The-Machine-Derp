@@ -2,15 +2,17 @@ package org.thederps
 
 import org.slf4j.LoggerFactory
 import org.thederps.client.ClientRetriever
+import org.thederps.module.MessageReceiver
 import org.thederps.module.Module
 import sx.blah.discord.api.IDiscordClient
+import sx.blah.discord.handle.impl.events.MessageReceivedEvent
 import sx.blah.discord.util.DiscordException
 import java.util.*
 
 /**
  * @author Vidmantas K. on 2016-10-07.
  */
-class BotController(val clientRetriever: ClientRetriever) {
+class BotController(val clientRetriever: ClientRetriever) : MessageReceiver {
     private val log = LoggerFactory.getLogger(BotController::class.java)
     private val activeModules = HashMap<String, Module>()
     private lateinit var client: IDiscordClient
@@ -19,6 +21,7 @@ class BotController(val clientRetriever: ClientRetriever) {
         try {
             client = clientRetriever.getClient()
             authenticator.login(client)
+            client.dispatcher.registerListener(this)
             return true
         } catch (cause: DiscordException) {
             log.warn("Could not launch bot", cause)
@@ -29,5 +32,9 @@ class BotController(val clientRetriever: ClientRetriever) {
     fun launchModule(module: Module) {
         client.dispatcher.registerListener(module)
         activeModules.putIfAbsent(module.key, module)
+    }
+
+    override fun onMessage(event: MessageReceivedEvent) {
+        log.debug("Received a message")
     }
 }

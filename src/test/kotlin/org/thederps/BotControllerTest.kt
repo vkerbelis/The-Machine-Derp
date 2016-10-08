@@ -9,6 +9,7 @@ import org.thederps.client.ClientRetriever
 import org.thederps.module.Module
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventDispatcher
+import sx.blah.discord.handle.impl.events.MessageReceivedEvent
 import sx.blah.discord.util.DiscordException
 
 /**
@@ -51,6 +52,13 @@ class BotControllerTest {
     }
 
     @Test
+    fun testSetUp_registersSelfAsMessageReceiver() {
+        controller.setUp(authenticator)
+
+        verify(dispatcher).registerListener(controller)
+    }
+
+    @Test
     fun testLaunchModule_registersDispatcherListener() {
         val command = mock(Module::class.java)
         controller.setUp(authenticator)
@@ -58,5 +66,10 @@ class BotControllerTest {
         controller.launchModule(command)
 
         verify(dispatcher).registerListener(command)
+    }
+
+    @Test
+    fun testOnMessage() {
+        controller.onMessage(mock(MessageReceivedEvent::class.java))
     }
 }

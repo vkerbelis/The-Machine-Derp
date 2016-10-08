@@ -2,6 +2,7 @@ package org.thederps
 
 import org.thederps.client.DiscordClientCreator
 import org.thederps.client.DiscordClientRetriever
+import org.thederps.command.ReconnectCommand
 import org.thederps.tools.CompletableFutureAsyncRunner
 
 /**
@@ -12,9 +13,12 @@ object Main {
     fun main(args: Array<String>) {
         val clientCreator = DiscordClientCreator()
         val clientRetriever = DiscordClientRetriever(args, clientCreator)
-        val authenticator = DiscordAuthenticator(clientRetriever, CompletableFutureAsyncRunner())
-        val botController = BotController(authenticator)
+        val authenticator = DiscordAuthenticator()
+        val botController = BotController(clientRetriever)
 
-        botController.launch()
+        val launched = botController.launch(authenticator)
+        if (launched) {
+            botController.registerCommand(ReconnectCommand(authenticator, CompletableFutureAsyncRunner()))
+        }
     }
 }

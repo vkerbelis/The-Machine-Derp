@@ -1,5 +1,6 @@
 package org.thederps
 
+import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.util.DiscordException
 
 /**
@@ -7,5 +8,7 @@ import sx.blah.discord.util.DiscordException
  */
 interface Authenticator {
     @Throws(DiscordException::class)
-    fun login()
+    fun login(client: IDiscordClient)
+
+    fun isTerminated(): Boolean
 }

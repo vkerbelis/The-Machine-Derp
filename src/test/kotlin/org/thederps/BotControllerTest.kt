@@ -1,5 +1,7 @@
 package org.thederps
 
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -31,19 +33,21 @@ class BotControllerTest {
     }
 
     @Test
-    fun testLaunch_callsLoginAction() {
-        controller.launch(authenticator)
+    fun testLaunch_returnsLaunchTrue() {
+        val launched = controller.launch(authenticator)
 
         verify(authenticator).login(client)
+        assertTrue("Not launched", launched)
     }
 
     @Test
     fun testLaunch_doesNotCrashOnAuthenticatorException() {
         doThrow(DiscordException("")).`when`(authenticator).login(client)
 
-        controller.launch(authenticator)
+        val launched = controller.launch(authenticator)
 
         verify(authenticator).login(client)
+        assertFalse("Launched", launched)
     }
 
     @Test

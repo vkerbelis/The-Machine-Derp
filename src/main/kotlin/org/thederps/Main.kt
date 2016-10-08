@@ -16,7 +16,9 @@ object Main {
         val authenticator = DiscordAuthenticator()
         val botController = BotController(clientRetriever)
 
-        botController.launch(authenticator)
-        botController.registerCommand(ReconnectCommand(authenticator, CompletableFutureAsyncRunner()))
+        val launched = botController.launch(authenticator)
+        if (launched) {
+            botController.registerCommand(ReconnectCommand(authenticator, CompletableFutureAsyncRunner()))
+        }
     }
 }

@@ -2,6 +2,8 @@ package org.thederps
 
 import org.thederps.client.DiscordClientCreator
 import org.thederps.client.DiscordClientRetriever
+import org.thederps.command.ReconnectCommand
+import org.thederps.tools.CompletableFutureAsyncRunner
 
 /**
  * @author Vidmantas K. on 2016-10-07.
@@ -15,5 +17,6 @@ object Main {
         val botController = BotController(clientRetriever)
 
         botController.launch(authenticator)
+        botController.registerCommand(ReconnectCommand(authenticator, CompletableFutureAsyncRunner()))
     }
 }

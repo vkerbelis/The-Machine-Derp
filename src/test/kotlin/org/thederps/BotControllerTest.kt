@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 import org.thederps.client.ClientRetriever
-import org.thederps.command.Command
+import org.thederps.module.Module
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventDispatcher
 import sx.blah.discord.util.DiscordException
@@ -33,29 +33,29 @@ class BotControllerTest {
     }
 
     @Test
-    fun testLaunch_returnsLaunchTrue() {
-        val launched = controller.launch(authenticator)
+    fun testSetUp_returnsLaunchTrue() {
+        val launched = controller.setUp(authenticator)
 
         verify(authenticator).login(client)
         assertTrue("Not launched", launched)
     }
 
     @Test
-    fun testLaunch_doesNotCrashOnAuthenticatorException() {
+    fun testSetUp_doesNotCrashOnAuthenticatorException() {
         doThrow(DiscordException("")).`when`(authenticator).login(client)
 
-        val launched = controller.launch(authenticator)
+        val launched = controller.setUp(authenticator)
 
         verify(authenticator).login(client)
         assertFalse("Launched", launched)
     }
 
     @Test
-    fun testRegisterCommand_registersDispatcherListener() {
-        val command = mock(Command::class.java)
-        controller.launch(authenticator)
+    fun testLaunchModule_registersDispatcherListener() {
+        val command = mock(Module::class.java)
+        controller.setUp(authenticator)
 
-        controller.registerCommand(command)
+        controller.launchModule(command)
 
         verify(dispatcher).registerListener(command)
     }

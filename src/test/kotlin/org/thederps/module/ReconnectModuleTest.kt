@@ -1,4 +1,4 @@
-package org.thederps.command
+package org.thederps.module
 
 import org.junit.Before
 import org.junit.Test
@@ -14,11 +14,11 @@ import sx.blah.discord.util.DiscordException
 /**
  * @author Vidmantas on 2016-10-08.
  */
-class ReconnectCommandTest {
+class ReconnectModuleTest {
     private lateinit var disconnectEvent: DiscordDisconnectedEvent
     private lateinit var authenticator: Authenticator
     private lateinit var asyncRunner: AsyncRunner
-    private lateinit var command: ReconnectCommand
+    private lateinit var command: ReconnectModule
     private lateinit var client: IDiscordClient
 
     @Before
@@ -28,7 +28,7 @@ class ReconnectCommandTest {
         authenticator = mock(Authenticator::class.java)
         disconnectEvent = mock(DiscordDisconnectedEvent::class.java)
         `when`(disconnectEvent.client).thenReturn(client)
-        command = ReconnectCommand(authenticator, asyncRunner)
+        command = ReconnectModule(authenticator, asyncRunner)
     }
 
     @Test

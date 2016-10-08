@@ -2,7 +2,7 @@ package org.thederps
 
 import org.slf4j.LoggerFactory
 import org.thederps.client.ClientRetriever
-import org.thederps.command.Command
+import org.thederps.module.Module
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.util.DiscordException
 
@@ -13,7 +13,7 @@ class BotController(val clientRetriever: ClientRetriever) {
     private val log = LoggerFactory.getLogger(BotController::class.java)
     private lateinit var client: IDiscordClient
 
-    fun launch(authenticator: Authenticator): Boolean {
+    fun setUp(authenticator: Authenticator): Boolean {
         try {
             client = clientRetriever.getClient()
             authenticator.login(client)
@@ -24,7 +24,7 @@ class BotController(val clientRetriever: ClientRetriever) {
         return false
     }
 
-    fun registerCommand(command: Command) {
-        client.dispatcher.registerListener(command)
+    fun launchModule(module: Module) {
+        client.dispatcher.registerListener(module)
     }
 }

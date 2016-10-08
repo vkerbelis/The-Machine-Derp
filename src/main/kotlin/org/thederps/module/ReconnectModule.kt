@@ -1,4 +1,4 @@
-package org.thederps.command
+package org.thederps.module
 
 import org.slf4j.LoggerFactory
 import org.thederps.Authenticator
@@ -9,8 +9,8 @@ import sx.blah.discord.util.DiscordException
 /**
  * @author Vidmantas on 2016-10-08.
  */
-class ReconnectCommand(val authenticator: Authenticator, val asyncRunner: AsyncRunner) : DisconnectCommand {
-    private val log = LoggerFactory.getLogger(ReconnectCommand::class.java)
+class ReconnectModule(val authenticator: Authenticator, val asyncRunner: AsyncRunner) : DisconnectModule {
+    private val log = LoggerFactory.getLogger(ReconnectModule::class.java)
 
     override fun onDisconnect(event: DiscordDisconnectedEvent) {
         asyncRunner.run({

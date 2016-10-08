@@ -1,31 +1,43 @@
 package org.thederps
 
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
+import org.thederps.client.ClientRetriever
+import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.util.DiscordException
 
 /**
  * @author Vidmantas on 2016-10-07.
  */
 class BotControllerTest {
+    private lateinit var clientRetriever: ClientRetriever
+    private lateinit var authenticator: Authenticator
+    private lateinit var controller: BotController
+    private lateinit var client: IDiscordClient
+
+    @Before
+    fun setUp() {
+        authenticator = mock(Authenticator::class.java)
+        clientRetriever = mock(ClientRetriever::class.java)
+        client = mock(IDiscordClient::class.java)
+        `when`(clientRetriever.getClient()).thenReturn(client)
+        controller = BotController(clientRetriever)
+    }
+
     @Test
     fun testLaunch_callsLoginAction() {
-        val authenticator = mock(Authenticator::class.java)
-        val controller = BotController(authenticator)
+        controller.launch(authenticator)
 
-        controller.launch()
-
-        verify(authenticator).login()
+        verify(authenticator).login(client)
     }
 
     @Test
     fun testLaunch_doesNotCrashOnAuthenticatorException() {
-        val authenticator = mock(Authenticator::class.java)
-        val controller = BotController(authenticator)
-        doThrow(DiscordException("")).`when`(authenticator).login()
+        doThrow(DiscordException("")).`when`(authenticator).login(client)
 
-        controller.launch()
+        controller.launch(authenticator)
 
-        verify(authenticator).login()
+        verify(authenticator).login(client)
     }
 }

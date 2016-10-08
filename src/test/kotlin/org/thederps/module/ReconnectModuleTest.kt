@@ -9,6 +9,7 @@ import org.thederps.Authenticator
 import org.thederps.testing.extensions.prepareRunForTest
 import org.thederps.tools.AsyncRunner
 import sx.blah.discord.api.IDiscordClient
+import sx.blah.discord.api.events.EventDispatcher
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent
 import sx.blah.discord.util.DiscordException
 
@@ -19,22 +20,53 @@ class ReconnectModuleTest {
     private lateinit var disconnectEvent: DiscordDisconnectedEvent
     private lateinit var authenticator: Authenticator
     private lateinit var asyncRunner: AsyncRunner
-    private lateinit var command: ReconnectModule
+    private lateinit var dispatcher: EventDispatcher
+    private lateinit var module: ReconnectModule
     private lateinit var client: IDiscordClient
 
     @Before
     fun setUp() {
         client = mock(IDiscordClient::class.java)
         asyncRunner = mock(AsyncRunner::class.java)
+        dispatcher = mock(EventDispatcher::class.java)
         authenticator = mock(Authenticator::class.java)
         disconnectEvent = mock(DiscordDisconnectedEvent::class.java)
         `when`(disconnectEvent.client).thenReturn(client)
-        command = ReconnectModule(authenticator, asyncRunner)
+        `when`(client.dispatcher).thenReturn(dispatcher)
+        module = ReconnectModule(authenticator, asyncRunner)
     }
 
     @Test
-    fun testGetKey_notEmpty() {
-        Assert.assertTrue("Module key is empty", !command.key.isEmpty())
+    fun testEnable_registersSelfAsDispatcherListener() {
+        module.enable(client)
+
+        verify(dispatcher).registerListener(module)
+    }
+
+    @Test
+    fun testDisable() {
+        module.disable()
+    }
+
+    @Test
+    fun testGetName_notEmpty() {
+        Assert.assertTrue("Name is empty", !module.name.isEmpty())
+    }
+
+    @Test
+    fun testGetVersion_notEmpty() {
+        Assert.assertTrue("Version is empty", !module.version.isEmpty())
+    }
+
+    @Test
+    fun testGetMinimumDiscord4JVersion_notEmpty() {
+        Assert.assertTrue("Min version is empty", !module.minimumDiscord4JVersion.isEmpty())
+    }
+
+    @Test
+    fun testGetAuthor_isMe() {
+        Assert.assertTrue("Author is empty", !module.author.isEmpty())
+        Assert.assertEquals("Author is not me", "Vidmantas K.", module.author)
     }
 
     @Test
@@ -42,7 +74,7 @@ class ReconnectModuleTest {
         `when`(authenticator.isTerminated()).thenReturn(false)
         asyncRunner.prepareRunForTest()
 
-        command.onDisconnect(disconnectEvent)
+        module.onDisconnect(disconnectEvent)
 
         verify(authenticator).login(client)
     }
@@ -53,7 +85,7 @@ class ReconnectModuleTest {
         asyncRunner.prepareRunForTest()
         doThrow(DiscordException::class.java).`when`(authenticator).login(client)
 
-        command.onDisconnect(disconnectEvent)
+        module.onDisconnect(disconnectEvent)
 
         verify(authenticator).login(client)
     }
@@ -63,7 +95,7 @@ class ReconnectModuleTest {
         `when`(authenticator.isTerminated()).thenReturn(true)
         asyncRunner.prepareRunForTest()
 
-        command.onDisconnect(disconnectEvent)
+        module.onDisconnect(disconnectEvent)
 
         verify(authenticator, Mockito.times(0)).login(client)
     }

@@ -11,6 +11,7 @@ import sx.blah.discord.util.DiscordException
  */
 class ReconnectModule(val authenticator: Authenticator, val asyncRunner: AsyncRunner) : DisconnectModule {
     private val log = LoggerFactory.getLogger(ReconnectModule::class.java)
+    override val key = "Reconnect"
 
     override fun onDisconnect(event: DiscordDisconnectedEvent) {
         asyncRunner.run({

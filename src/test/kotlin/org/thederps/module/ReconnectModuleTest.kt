@@ -1,5 +1,6 @@
 package org.thederps.module
 
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -29,6 +30,11 @@ class ReconnectModuleTest {
         disconnectEvent = mock(DiscordDisconnectedEvent::class.java)
         `when`(disconnectEvent.client).thenReturn(client)
         command = ReconnectModule(authenticator, asyncRunner)
+    }
+
+    @Test
+    fun testGetKey_notEmpty() {
+        Assert.assertTrue("Module key is empty", !command.key.isEmpty())
     }
 
     @Test

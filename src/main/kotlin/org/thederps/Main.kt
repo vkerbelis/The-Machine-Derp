@@ -4,6 +4,7 @@ import org.thederps.client.DiscordClientCreator
 import org.thederps.client.DiscordClientRetriever
 import org.thederps.module.ReconnectModule
 import org.thederps.tools.CompletableFutureAsyncRunner
+import org.thederps.tools.DiscordMessageCreator
 
 /**
  * @author Vidmantas K. on 2016-10-07.
@@ -14,7 +15,7 @@ object Main {
         val clientCreator = DiscordClientCreator()
         val clientRetriever = DiscordClientRetriever(args, clientCreator)
         val authenticator = DiscordAuthenticator()
-        val botController = BotController(clientRetriever)
+        val botController = BotController(clientRetriever, DiscordMessageCreator())
 
         val isSetUp = botController.setUp(authenticator)
         if (isSetUp) {

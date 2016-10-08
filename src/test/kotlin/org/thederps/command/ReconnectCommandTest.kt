@@ -2,6 +2,7 @@ package org.thederps.command
 
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.thederps.Authenticator
 import org.thederps.testing.extensions.prepareRunForTest
@@ -31,7 +32,8 @@ class ReconnectCommandTest {
     }
 
     @Test
-    fun testOnDisconnect_callsClientLogin() {
+    fun testOnDisconnect_callsClientLoginIfNotTerminated() {
+        `when`(authenticator.isTerminated()).thenReturn(false)
         asyncRunner.prepareRunForTest()
 
         command.onDisconnect(disconnectEvent)
@@ -41,11 +43,22 @@ class ReconnectCommandTest {
 
     @Test
     fun testOnDisconnect_doesNotCrashOnClientLoginException() {
+        `when`(authenticator.isTerminated()).thenReturn(false)
         asyncRunner.prepareRunForTest()
         doThrow(DiscordException::class.java).`when`(authenticator).login(client)
 
         command.onDisconnect(disconnectEvent)
 
         verify(authenticator).login(client)
+    }
+
+    @Test
+    fun testOnDisconnect_doesNothingIfTerminated() {
+        `when`(authenticator.isTerminated()).thenReturn(true)
+        asyncRunner.prepareRunForTest()
+
+        command.onDisconnect(disconnectEvent)
+
+        verify(authenticator, Mockito.times(0)).login(client)
     }
 }

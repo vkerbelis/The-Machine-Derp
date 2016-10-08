@@ -9,4 +9,6 @@ import sx.blah.discord.util.DiscordException
 interface Authenticator {
     @Throws(DiscordException::class)
     fun login(client: IDiscordClient)
+
+    fun isTerminated(): Boolean
 }

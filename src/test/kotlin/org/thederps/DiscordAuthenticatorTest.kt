@@ -1,5 +1,6 @@
 package org.thederps
 
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -40,6 +41,13 @@ class DiscordAuthenticatorTest {
     @Test
     fun testOnReady_passesWithoutException() {
         authenticator.onReady(mock(ReadyEvent::class.java))
+    }
+
+    @Test
+    fun testIsTerminated_returnsFalseByDefault() {
+        val terminated = authenticator.isTerminated()
+
+        assertFalse("Terminated", terminated)
     }
 }
 

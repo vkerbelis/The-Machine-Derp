@@ -1,4 +1,4 @@
-package org.thederps.command
+package org.thederps.module
 
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent
@@ -6,7 +6,7 @@ import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent
 /**
  * @author Vidmantas on 2016-10-08.
  */
-interface DisconnectCommand : Command {
+interface DisconnectReceiver {
     @EventSubscriber
     fun onDisconnect(event: DiscordDisconnectedEvent)
 }

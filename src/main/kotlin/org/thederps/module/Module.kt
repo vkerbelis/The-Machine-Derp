@@ -7,4 +7,6 @@ import sx.blah.discord.modules.IModule
  */
 interface Module : IModule {
     val command: String
+
+    val description: String
 }

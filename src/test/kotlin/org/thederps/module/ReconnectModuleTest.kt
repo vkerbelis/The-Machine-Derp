@@ -68,6 +68,11 @@ class ReconnectModuleTest {
     }
 
     @Test
+    fun testGetDescription_notEmpty() {
+        Assert.assertTrue("Description is empty", !module.description.isEmpty())
+    }
+
+    @Test
     fun testGetName_notEmpty() {
         Assert.assertTrue("Name is empty", !module.name.isEmpty())
     }

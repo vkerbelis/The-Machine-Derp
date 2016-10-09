@@ -12,8 +12,8 @@ fun Module.commandValid(event: MessageReceivedEvent): Boolean {
     return message.content.startsWith(this.command) && !message.author.isBot
 }
 
-fun MessageBuilder.withCommand(position: Int, command: String) {
-    this.withContent(position.toString() + ". " + command + "\n")
+fun MessageBuilder.withCommand(position: Int, command: String, description: String) {
+    this.withContent(position.toString() + ". " + command + " - " + description + "\n")
 }
 
 fun Module.hasExecutableCommand() = !command.isEmpty()

@@ -19,6 +19,8 @@ class HelpModule(
 ) : Module, MessageReceiver {
     override val command = "!help"
 
+    override val description = "Shows the available commands"
+
     override fun getName() = "Help"
 
     override fun enable(client: IDiscordClient) = true
@@ -49,7 +51,7 @@ class HelpModule(
         var position = 1
         moduleRetriever.getModules().forEach { module ->
             if (module.hasExecutableCommand()) {
-                builder.withCommand(position, module.command)
+                builder.withCommand(position, module.command, module.description)
                 position++
             }
         }

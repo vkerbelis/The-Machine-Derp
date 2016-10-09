@@ -1,5 +1,6 @@
 package org.thederps
 
+import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -33,6 +34,13 @@ class BotControllerTest {
         `when`(client.moduleLoader).thenReturn(moduleLoader)
         `when`(client.dispatcher).thenReturn(dispatcher)
         controller = BotController(clientRetriever)
+    }
+
+    @Test
+    fun testGetClientRetriever_returnsSetValue() {
+        val actualParam = controller.clientRetriever
+
+        Assert.assertSame("Not same", clientRetriever, actualParam)
     }
 
     @Test

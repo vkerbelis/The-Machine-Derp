@@ -88,6 +88,11 @@ class HelpModuleTest {
     }
 
     @Test
+    fun testGetDescription_notEmpty() {
+        Assert.assertTrue("Description is empty", !module.description.isEmpty())
+    }
+
+    @Test
     fun testGetName_notEmpty() {
         Assert.assertTrue("Name is empty", !module.name.isEmpty())
     }
@@ -164,11 +169,12 @@ class HelpModuleTest {
         setUpMessagePass()
         val listModule = mock(Module::class.java)
         `when`(listModule.command).thenReturn("command")
+        `when`(listModule.description).thenReturn("")
         val expectedModules = listOf<Module>(listModule)
         `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
 
         module.onMessage(messageEvent)
-        verify(messageBuilder).withCommand(1, listModule.command)
+        verify(messageBuilder).withCommand(1, listModule.command, listModule.description)
     }
 
     @Test
@@ -176,11 +182,12 @@ class HelpModuleTest {
         setUpMessagePass()
         val listModule = mock(Module::class.java)
         `when`(listModule.command).thenReturn("")
+        `when`(listModule.description).thenReturn("description")
         val expectedModules = listOf<Module>(listModule)
         `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
 
         module.onMessage(messageEvent)
-        verify(messageBuilder, Mockito.times(0)).withCommand(1, listModule.command)
+        verify(messageBuilder, Mockito.times(0)).withCommand(1, listModule.command, listModule.description)
     }
 
     private fun setUpMessagePass() {

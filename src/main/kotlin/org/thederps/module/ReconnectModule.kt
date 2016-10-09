@@ -19,6 +19,8 @@ class ReconnectModule(
 
     override val command = ""
 
+    override val description = "Tries to automatically reconnect the bot on a disconnect event"
+
     override fun getName() = "Reconnect"
 
     override fun enable(client: IDiscordClient) = true

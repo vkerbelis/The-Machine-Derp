@@ -6,6 +6,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.thederps.Authenticator
+import org.thederps.testing.ModuleTest
 import org.thederps.testing.extensions.prepareRunForTest
 import org.thederps.tools.AsyncRunner
 import sx.blah.discord.api.IDiscordClient
@@ -16,12 +17,13 @@ import sx.blah.discord.util.DiscordException
 /**
  * @author Vidmantas on 2016-10-08.
  */
-class ReconnectModuleTest {
+class ReconnectModuleTest : ModuleTest<ReconnectModule>() {
+    override val module: ReconnectModule
+        get() = ReconnectModule(authenticator, asyncRunner)
     private lateinit var disconnectEvent: DiscordDisconnectedEvent
     private lateinit var authenticator: Authenticator
     private lateinit var asyncRunner: AsyncRunner
     private lateinit var dispatcher: EventDispatcher
-    private lateinit var module: ReconnectModule
     private lateinit var client: IDiscordClient
 
     @Before
@@ -33,7 +35,6 @@ class ReconnectModuleTest {
         disconnectEvent = mock(DiscordDisconnectedEvent::class.java)
         `when`(disconnectEvent.client).thenReturn(client)
         `when`(client.dispatcher).thenReturn(dispatcher)
-        module = ReconnectModule(authenticator, asyncRunner)
     }
 
     @Test
@@ -60,37 +61,6 @@ class ReconnectModuleTest {
     @Test
     fun testDisable() {
         module.disable()
-    }
-
-    @Test
-    fun testGetCommand_isEmpty() {
-        Assert.assertTrue("Command not empty", module.command.isEmpty())
-    }
-
-    @Test
-    fun testGetDescription_notEmpty() {
-        Assert.assertTrue("Description is empty", !module.description.isEmpty())
-    }
-
-    @Test
-    fun testGetName_notEmpty() {
-        Assert.assertTrue("Name is empty", !module.name.isEmpty())
-    }
-
-    @Test
-    fun testGetVersion_notEmpty() {
-        Assert.assertTrue("Version is empty", !module.version.isEmpty())
-    }
-
-    @Test
-    fun testGetMinimumDiscord4JVersion_notEmpty() {
-        Assert.assertTrue("Min version is empty", !module.minimumDiscord4JVersion.isEmpty())
-    }
-
-    @Test
-    fun testGetAuthor_isMe() {
-        Assert.assertTrue("Author is empty", !module.author.isEmpty())
-        Assert.assertEquals("Author is not me", "Vidmantas K.", module.author)
     }
 
     @Test

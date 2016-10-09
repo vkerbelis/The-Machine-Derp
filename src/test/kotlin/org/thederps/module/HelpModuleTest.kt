@@ -1,58 +1,20 @@
 package org.thederps.module
 
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
-import org.thederps.testing.extensions.any
-import org.thederps.tools.MessageCreator
+import org.thederps.testing.CommandModuleTest
+import org.thederps.testing.extensions.setUpMessage
+import org.thederps.testing.extensions.setUpMessageBot
 import org.thederps.tools.appendCommand
-import sx.blah.discord.api.IDiscordClient
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent
-import sx.blah.discord.handle.impl.obj.Channel
-import sx.blah.discord.handle.obj.IMessage
-import sx.blah.discord.handle.obj.IUser
-import sx.blah.discord.util.MessageBuilder
 
 /**
  * @author Vidmantas on 2016-10-09.
  */
-class HelpModuleTest {
-    private lateinit var moduleRetriever: ModuleRetriever
-    private lateinit var messageBuilder: MessageBuilder
-    private lateinit var messageCreator: MessageCreator
-    private lateinit var messageEvent: MessageReceivedEvent
-    private lateinit var message: IMessage
-    private lateinit var module: HelpModule
-    private lateinit var client: IDiscordClient
-    private lateinit var user: IUser
-
-    @Before
-    fun setUp() {
-        moduleRetriever = mock(ModuleRetriever::class.java)
-        messageBuilder = mock(MessageBuilder::class.java)
-        messageCreator = mock(MessageCreator::class.java)
-        messageEvent = mock(MessageReceivedEvent::class.java)
-        message = mock(IMessage::class.java)
-        client = mock(IDiscordClient::class.java)
-        user = mock(IUser::class.java)
-        `when`(messageEvent.message).thenReturn(message)
-        `when`(message.author).thenReturn(user)
-        `when`(messageCreator.with(client)).thenReturn(messageBuilder)
-        `when`(messageEvent.message).thenReturn(message)
-        `when`(messageEvent.client).thenReturn(client)
-        `when`(messageBuilder.withChannel(
-                any<Channel>())
-        ).thenReturn(messageBuilder)
-        `when`(messageBuilder.withContent(
-                any<String>())
-        ).thenReturn(messageBuilder)
-        `when`(messageBuilder.appendContent(
-                any<String>())
-        ).thenReturn(messageBuilder)
-        module = HelpModule(messageCreator, moduleRetriever)
-    }
+class HelpModuleTest : CommandModuleTest<HelpModule>() {
+    override val module: HelpModule
+        get() = HelpModule(messageCreator, moduleRetriever)
 
     @Test
     fun testGetMessageCreator_returnsSetValue() {
@@ -69,7 +31,7 @@ class HelpModuleTest {
     }
 
     @Test
-    fun testEnable_returnsTrue() {
+    fun testEnable_isEnabled() {
         val enabled = module.enable(client)
 
         Assert.assertTrue("Disabled", enabled)
@@ -81,46 +43,13 @@ class HelpModuleTest {
     }
 
     @Test
-    fun testGetCommand_empty() {
+    fun testGetCommand_notEmpty() {
         Assert.assertTrue("Command empty", !module.command.isEmpty())
     }
 
     @Test
-    fun testGetCommand_startsWithCommandPrefix() {
-        Assert.assertTrue("Doesn't start with prefix", module.command.startsWith("!"))
-    }
-
-    @Test
-    fun testGetDescription_notEmpty() {
-        Assert.assertTrue("Description is empty", !module.description.isEmpty())
-    }
-
-    @Test
-    fun testGetName_notEmpty() {
-        Assert.assertTrue("Name is empty", !module.name.isEmpty())
-    }
-
-    @Test
-    fun testGetVersion_notEmpty() {
-        Assert.assertTrue("Version is empty", !module.version.isEmpty())
-    }
-
-    @Test
-    fun testGetMinimumDiscord4JVersion_notEmpty() {
-        Assert.assertTrue("Min version is empty", !module.minimumDiscord4JVersion.isEmpty())
-    }
-
-    @Test
-    fun testGetAuthor_isMe() {
-        Assert.assertTrue("Author is empty", !module.author.isEmpty())
-        Assert.assertEquals("Author is not me", "Vidmantas K.", module.author)
-    }
-
-    @Test
     fun testOnMessage_sendsMessageToSameChannel() {
-        setUpMessagePass()
-        val channel = mock(Channel::class.java)
-        `when`(message.channel).thenReturn(channel)
+        setUpMessage(module.command)
 
         module.onMessage(messageEvent)
 
@@ -129,11 +58,8 @@ class HelpModuleTest {
     }
 
     @Test
-    fun testOnMessage_doesNotSendMessageWhenCommandIsHelpUserIsBot() {
-        `when`(message.content).thenReturn(module.command)
-        val channel = mock(Channel::class.java)
-        `when`(message.channel).thenReturn(channel)
-        `when`(user.isBot).thenReturn(true)
+    fun testOnMessage_doesNotSendMessageWhenCommandValidUserIsBot() {
+        setUpMessageBot(module.command)
 
         module.onMessage(messageEvent)
 
@@ -142,11 +68,8 @@ class HelpModuleTest {
     }
 
     @Test
-    fun testOnMessage_doesNotSendMessageWhenCommandNotHelp() {
-        `when`(message.content).thenReturn("__")
-        val channel = mock(Channel::class.java)
-        `when`(message.channel).thenReturn(channel)
-        `when`(user.isBot).thenReturn(false)
+    fun testOnMessage_doesNotSendMessageWhenCommandInvalid() {
+        setUpMessage("__")
 
         module.onMessage(messageEvent)
 
@@ -155,11 +78,8 @@ class HelpModuleTest {
     }
 
     @Test
-    fun testOnMessage_doesNotSendMessageWhenCommandNotHelpAndUserIsBot() {
-        `when`(message.content).thenReturn("__")
-        val channel = mock(Channel::class.java)
-        `when`(message.channel).thenReturn(channel)
-        `when`(user.isBot).thenReturn(true)
+    fun testOnMessage_doesNotSendMessageWhenCommandInvalidUserIsBot() {
+        setUpMessageBot("__")
 
         module.onMessage(messageEvent)
 
@@ -169,7 +89,7 @@ class HelpModuleTest {
 
     @Test
     fun testOnMessage_appendsMessageWithModuleCommands() {
-        setUpMessagePass()
+        setUpMessage(module.command)
         val listModule = mock(Module::class.java)
         `when`(listModule.command).thenReturn("command")
         `when`(listModule.description).thenReturn("")
@@ -177,12 +97,13 @@ class HelpModuleTest {
         `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
 
         module.onMessage(messageEvent)
+
         verify(messageBuilder).appendCommand(1, listModule.command, listModule.description)
     }
 
     @Test
     fun testOnMessage_skipsNonExecutableCommandAppend() {
-        setUpMessagePass()
+        setUpMessage(module.command)
         val listModule = mock(Module::class.java)
         `when`(listModule.command).thenReturn("")
         `when`(listModule.description).thenReturn("description")
@@ -190,12 +111,9 @@ class HelpModuleTest {
         `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
 
         module.onMessage(messageEvent)
-        verify(messageBuilder, Mockito.times(0)).appendCommand(1, listModule.command, listModule.description)
-    }
 
-    private fun setUpMessagePass() {
-        `when`(message.content).thenReturn(module.command)
-        `when`(user.isBot).thenReturn(false)
+        verify(moduleRetriever).getModules()
+        verify(messageBuilder, Mockito.times(0)).appendCommand(1, listModule.command, listModule.description)
     }
 }
 

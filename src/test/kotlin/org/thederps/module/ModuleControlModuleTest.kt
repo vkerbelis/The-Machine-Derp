@@ -1,26 +1,28 @@
 package org.thederps.module
 
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
-import sx.blah.discord.api.IDiscordClient
+import org.mockito.Mockito
+import org.thederps.testing.CommandModuleTest
+import org.thederps.testing.extensions.setUpMessage
+import org.thederps.testing.extensions.setUpMessageBot
 
 /**
  * @author Vidmantas on 2016-10-09.
  */
-class ModuleControlModuleTest {
-    private lateinit var module: ModuleControlModule
-    private lateinit var client: IDiscordClient
+class ModuleControlModuleTest : CommandModuleTest<ModuleControlModule>() {
+    override val module: ModuleControlModule
+        get() = ModuleControlModule(messageCreator)
 
-    @Before
-    fun setUp() {
-        client = mock(IDiscordClient::class.java)
-        module = ModuleControlModule()
+    @Test
+    fun testGetMessageCreator_returnsSetValue() {
+        val actualMessageCreator = module.messageCreator
+
+        Assert.assertSame("Not same", messageCreator, actualMessageCreator)
     }
 
     @Test
-    fun testEnable_returnsTrue() {
+    fun testEnable_isEnabled() {
         val enabled = module.enable(client)
 
         Assert.assertTrue("Disabled", enabled)
@@ -32,38 +34,47 @@ class ModuleControlModuleTest {
     }
 
     @Test
-    fun testGetCommand_empty() {
+    fun testGetCommand_notEmpty() {
         Assert.assertTrue("Command empty", !module.command.isEmpty())
     }
 
     @Test
-    fun testGetCommand_startsWithCommandPrefix() {
-        Assert.assertTrue("Doesn't start with prefix", module.command.startsWith("!"))
+    fun testOnMessage_sendsMessageToSameChannelWhenCommandValidUserNotBot() {
+        setUpMessage(module.command)
+
+        module.onMessage(messageEvent)
+
+        Mockito.verify(messageBuilder).withChannel(channel)
+        Mockito.verify(messageBuilder).build()
     }
 
     @Test
-    fun testGetDescription_notEmpty() {
-        Assert.assertTrue("Description is empty", !module.description.isEmpty())
+    fun testOnMessage_doesNotSendMessageWhenCommandValidUserIsBot() {
+        setUpMessageBot(module.command)
+
+        module.onMessage(messageEvent)
+
+        Mockito.verify(messageBuilder, Mockito.times(0)).withChannel(channel)
+        Mockito.verify(messageBuilder, Mockito.times(0)).build()
     }
 
     @Test
-    fun testGetName_notEmpty() {
-        Assert.assertTrue("Name is empty", !module.name.isEmpty())
+    fun testOnMessage_doesNotSendMessageWhenCommandInvalid() {
+        setUpMessage("__")
+
+        module.onMessage(messageEvent)
+
+        Mockito.verify(messageBuilder, Mockito.times(0)).withChannel(channel)
+        Mockito.verify(messageBuilder, Mockito.times(0)).build()
     }
 
     @Test
-    fun testGetVersion_notEmpty() {
-        Assert.assertTrue("Version is empty", !module.version.isEmpty())
-    }
+    fun testOnMessage_doesNotSendMessageWhenCommandInvalidUserIsBot() {
+        setUpMessageBot("__")
 
-    @Test
-    fun testGetMinimumDiscord4JVersion_notEmpty() {
-        Assert.assertTrue("Min version is empty", !module.minimumDiscord4JVersion.isEmpty())
-    }
+        module.onMessage(messageEvent)
 
-    @Test
-    fun testGetAuthor_isMe() {
-        Assert.assertTrue("Author is empty", !module.author.isEmpty())
-        Assert.assertEquals("Author is not me", "Vidmantas K.", module.author)
+        Mockito.verify(messageBuilder, Mockito.times(0)).withChannel(channel)
+        Mockito.verify(messageBuilder, Mockito.times(0)).build()
     }
 }

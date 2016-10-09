@@ -22,8 +22,9 @@ object Main {
         val isSetUp = botController.setUp(authenticator)
         if (isSetUp) {
             botController.launchModule(ReconnectModule(authenticator, CompletableFutureAsyncRunner()))
-            botController.launchModule(HelpModule(DiscordMessageCreator(), botController))
-            botController.launchModule(ModuleControlModule())
+            val messageCreator = DiscordMessageCreator()
+            botController.launchModule(HelpModule(messageCreator, botController))
+            botController.launchModule(ModuleControlModule(messageCreator))
         }
     }
 }

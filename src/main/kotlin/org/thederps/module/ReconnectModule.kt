@@ -17,10 +17,7 @@ class ReconnectModule(val authenticator: Authenticator, val asyncRunner: AsyncRu
 
     override fun getName() = "Reconnect"
 
-    override fun enable(client: IDiscordClient): Boolean {
-        client.dispatcher.registerListener(this)
-        return true
-    }
+    override fun enable(client: IDiscordClient) = true
 
     override fun getVersion() = "1.0"
 
@@ -44,5 +41,4 @@ class ReconnectModule(val authenticator: Authenticator, val asyncRunner: AsyncRu
             }
         })
     }
-
 }

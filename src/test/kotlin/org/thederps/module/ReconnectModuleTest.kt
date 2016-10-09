@@ -37,10 +37,10 @@ class ReconnectModuleTest {
     }
 
     @Test
-    fun testEnable_registersSelfAsDispatcherListener() {
-        module.enable(client)
+    fun testEnable_returnsTrue() {
+        val enabled = module.enable(client)
 
-        verify(dispatcher).registerListener(module)
+        Assert.assertTrue("Disabled", enabled)
     }
 
     @Test

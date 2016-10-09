@@ -1,4 +1,4 @@
-package org.thederps.module
+package org.thederps.module.receiver
 
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent

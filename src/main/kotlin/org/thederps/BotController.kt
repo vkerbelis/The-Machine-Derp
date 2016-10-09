@@ -2,7 +2,7 @@ package org.thederps
 
 import org.slf4j.LoggerFactory
 import org.thederps.client.ClientRetriever
-import org.thederps.module.MessageReceiver
+import org.thederps.module.receiver.MessageReceiver
 import org.thederps.tools.MessageCreator
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventSubscriber

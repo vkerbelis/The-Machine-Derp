@@ -2,6 +2,7 @@ package org.thederps.module
 
 import org.slf4j.LoggerFactory
 import org.thederps.Authenticator
+import org.thederps.module.receiver.DisconnectReceiver
 import org.thederps.tools.AsyncRunner
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent

@@ -2,9 +2,9 @@ package org.thederps.module
 
 import org.thederps.module.receiver.MessageReceiver
 import org.thederps.tools.MessageCreator
+import org.thederps.tools.appendCommand
 import org.thederps.tools.commandValid
 import org.thederps.tools.hasExecutableCommand
-import org.thederps.tools.withCommand
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent
@@ -42,8 +42,10 @@ class HelpModule(
             val builder = messageCreator.with(event.client)
                     .withChannel(message.channel)
                     .withContent("Hi there, I can accept the following commands:\n")
+                    .appendContent("---------------------------")
             appendCommands(builder)
-            builder.build()
+            builder.appendContent("---------------------------")
+                    .build()
         }
     }
 
@@ -51,7 +53,7 @@ class HelpModule(
         var position = 1
         moduleRetriever.getModules().forEach { module ->
             if (module.hasExecutableCommand()) {
-                builder.withCommand(position, module.command, module.description)
+                builder.appendCommand(position, module.command, module.description)
                 position++
             }
         }

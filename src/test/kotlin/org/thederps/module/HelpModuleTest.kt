@@ -7,7 +7,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.thederps.testing.extensions.any
 import org.thederps.tools.MessageCreator
-import org.thederps.tools.withCommand
+import org.thederps.tools.appendCommand
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent
 import sx.blah.discord.handle.impl.obj.Channel
@@ -46,6 +46,9 @@ class HelpModuleTest {
                 any<Channel>())
         ).thenReturn(messageBuilder)
         `when`(messageBuilder.withContent(
+                any<String>())
+        ).thenReturn(messageBuilder)
+        `when`(messageBuilder.appendContent(
                 any<String>())
         ).thenReturn(messageBuilder)
         module = HelpModule(messageCreator, moduleRetriever)
@@ -174,7 +177,7 @@ class HelpModuleTest {
         `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
 
         module.onMessage(messageEvent)
-        verify(messageBuilder).withCommand(1, listModule.command, listModule.description)
+        verify(messageBuilder).appendCommand(1, listModule.command, listModule.description)
     }
 
     @Test
@@ -187,7 +190,7 @@ class HelpModuleTest {
         `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
 
         module.onMessage(messageEvent)
-        verify(messageBuilder, Mockito.times(0)).withCommand(1, listModule.command, listModule.description)
+        verify(messageBuilder, Mockito.times(0)).appendCommand(1, listModule.command, listModule.description)
     }
 
     private fun setUpMessagePass() {

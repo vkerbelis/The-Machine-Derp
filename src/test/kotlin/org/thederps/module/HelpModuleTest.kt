@@ -7,6 +7,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.thederps.testing.extensions.any
 import org.thederps.tools.MessageCreator
+import org.thederps.tools.withCommand
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent
 import sx.blah.discord.handle.impl.obj.Channel
@@ -18,7 +19,9 @@ import sx.blah.discord.util.MessageBuilder
  * @author Vidmantas on 2016-10-09.
  */
 class HelpModuleTest {
+    private lateinit var moduleRetriever: ModuleRetriever
     private lateinit var messageBuilder: MessageBuilder
+    private lateinit var messageCreator: MessageCreator
     private lateinit var messageEvent: MessageReceivedEvent
     private lateinit var message: IMessage
     private lateinit var module: HelpModule
@@ -27,14 +30,15 @@ class HelpModuleTest {
 
     @Before
     fun setUp() {
+        moduleRetriever = mock(ModuleRetriever::class.java)
         messageBuilder = mock(MessageBuilder::class.java)
+        messageCreator = mock(MessageCreator::class.java)
         messageEvent = mock(MessageReceivedEvent::class.java)
         message = mock(IMessage::class.java)
         client = mock(IDiscordClient::class.java)
         user = mock(IUser::class.java)
         `when`(messageEvent.message).thenReturn(message)
         `when`(message.author).thenReturn(user)
-        val messageCreator = mock(MessageCreator::class.java)
         `when`(messageCreator.with(client)).thenReturn(messageBuilder)
         `when`(messageEvent.message).thenReturn(message)
         `when`(messageEvent.client).thenReturn(client)
@@ -44,9 +48,22 @@ class HelpModuleTest {
         `when`(messageBuilder.withContent(
                 any<String>())
         ).thenReturn(messageBuilder)
-        module = HelpModule(messageCreator)
+        module = HelpModule(messageCreator, moduleRetriever)
     }
 
+    @Test
+    fun testGetMessageCreator_returnsSetValue() {
+        val actualMessageCreator = module.messageCreator
+
+        Assert.assertSame("Not same", messageCreator, actualMessageCreator)
+    }
+
+    @Test
+    fun testGetModuleRetriever_returnsSetValue() {
+        val actualModuleRetriever = module.moduleRetriever
+
+        Assert.assertSame("Not same", moduleRetriever, actualModuleRetriever)
+    }
 
     @Test
     fun testEnable_returnsTrue() {
@@ -58,6 +75,16 @@ class HelpModuleTest {
     @Test
     fun testDisable() {
         module.disable()
+    }
+
+    @Test
+    fun testGetCommand_empty() {
+        Assert.assertTrue("Command empty", !module.command.isEmpty())
+    }
+
+    @Test
+    fun testGetCommand_startsWithCommandPrefix() {
+        Assert.assertTrue("Doesn't start with prefix", module.command.startsWith("!"))
     }
 
     @Test
@@ -83,10 +110,9 @@ class HelpModuleTest {
 
     @Test
     fun testOnMessage_sendsMessageToSameChannel() {
-        `when`(message.content).thenReturn(HelpModule.COMMAND_HELP)
+        setUpMessagePass()
         val channel = mock(Channel::class.java)
         `when`(message.channel).thenReturn(channel)
-        `when`(user.isBot).thenReturn(false)
 
         module.onMessage(messageEvent)
 
@@ -96,7 +122,7 @@ class HelpModuleTest {
 
     @Test
     fun testOnMessage_doesNotSendMessageWhenCommandIsHelpUserIsBot() {
-        `when`(message.content).thenReturn(HelpModule.COMMAND_HELP)
+        `when`(message.content).thenReturn(module.command)
         val channel = mock(Channel::class.java)
         `when`(message.channel).thenReturn(channel)
         `when`(user.isBot).thenReturn(true)
@@ -131,6 +157,23 @@ class HelpModuleTest {
 
         verify(messageBuilder, Mockito.times(0)).withChannel(channel)
         verify(messageBuilder, Mockito.times(0)).build()
+    }
+
+    @Test
+    fun testOnMessage_appendsMessageWithModuleCommands() {
+        setUpMessagePass()
+        val listModule = mock(Module::class.java)
+        `when`(listModule.command).thenReturn("command")
+        val expectedModules = listOf<Module>(listModule)
+        `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
+
+        module.onMessage(messageEvent)
+        verify(messageBuilder).withCommand(1, listModule.command)
+    }
+
+    private fun setUpMessagePass() {
+        `when`(message.content).thenReturn(module.command)
+        `when`(user.isBot).thenReturn(false)
     }
 }
 

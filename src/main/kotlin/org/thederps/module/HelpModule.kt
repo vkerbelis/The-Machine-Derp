@@ -3,18 +3,20 @@ package org.thederps.module
 import org.thederps.module.receiver.MessageReceiver
 import org.thederps.tools.MessageCreator
 import org.thederps.tools.commandValid
+import org.thederps.tools.withCommand
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent
-import sx.blah.discord.modules.IModule
+import sx.blah.discord.util.MessageBuilder
 
 /**
  * @author Vidmantas on 2016-10-09.
  */
-class HelpModule(val messageCreator: MessageCreator) : IModule, MessageReceiver {
-    companion object {
-        val COMMAND_HELP = "!help"
-    }
+class HelpModule(
+        val messageCreator: MessageCreator,
+        val moduleRetriever: ModuleRetriever
+) : Module, MessageReceiver {
+    override val command = "!help"
 
     override fun getName() = "Help"
 
@@ -33,11 +35,20 @@ class HelpModule(val messageCreator: MessageCreator) : IModule, MessageReceiver 
     @EventSubscriber
     override fun onMessage(event: MessageReceivedEvent) {
         val message = event.message
-        if (commandValid(event, COMMAND_HELP)) {
-            messageCreator.with(event.client)
+        if (commandValid(event)) {
+            val builder = messageCreator.with(event.client)
                     .withChannel(message.channel)
-                    .withContent("Welcome to Help")
-                    .build()
+                    .withContent("Hi there, I can accept the following commands:\n")
+            appendCommands(builder)
+            builder.build()
+        }
+    }
+
+    private fun appendCommands(builder: MessageBuilder) {
+        var position = 1
+        moduleRetriever.getModules().forEach { module ->
+            builder.withCommand(position, module.command)
+            position++
         }
     }
 }

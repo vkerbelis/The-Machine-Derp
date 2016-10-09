@@ -37,6 +37,20 @@ class ReconnectModuleTest {
     }
 
     @Test
+    fun testGetAuthenticator_returnsSetValue() {
+        val actualAuthenticator = module.authenticator
+
+        Assert.assertSame("Not same", authenticator, actualAuthenticator)
+    }
+
+    @Test
+    fun testGetAsyncRunner_returnsSetValue() {
+        val actualAsyncRunner = module.asyncRunner
+
+        Assert.assertSame("Not same", asyncRunner, actualAsyncRunner)
+    }
+
+    @Test
     fun testEnable_returnsTrue() {
         val enabled = module.enable(client)
 
@@ -46,6 +60,11 @@ class ReconnectModuleTest {
     @Test
     fun testDisable() {
         module.disable()
+    }
+
+    @Test
+    fun testGetCommand_isEmpty() {
+        Assert.assertTrue("Command not empty", module.command.isEmpty())
     }
 
     @Test

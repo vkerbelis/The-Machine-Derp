@@ -1,12 +1,17 @@
 package org.thederps.tools
 
+import org.thederps.module.Module
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent
-import sx.blah.discord.modules.IModule
+import sx.blah.discord.util.MessageBuilder
 
 /**
  * @author Vidmantas on 2016-10-09.
  */
-fun IModule.commandValid(event: MessageReceivedEvent, command: String): Boolean {
+fun Module.commandValid(event: MessageReceivedEvent): Boolean {
     val message = event.message
-    return message.content.startsWith(command) && !message.author.isBot
+    return message.content.startsWith(this.command) && !message.author.isBot
+}
+
+fun MessageBuilder.withCommand(position: Int, command: String) {
+    this.withContent(position.toString() + ". " + command + "\n")
 }

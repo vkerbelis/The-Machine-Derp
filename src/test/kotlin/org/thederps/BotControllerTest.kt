@@ -1,14 +1,13 @@
 package org.thederps
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 import org.thederps.client.ClientRetriever
+import org.thederps.module.Module
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventDispatcher
-import sx.blah.discord.modules.IModule
 import sx.blah.discord.modules.ModuleLoader
 import sx.blah.discord.util.DiscordException
 
@@ -56,11 +55,22 @@ class BotControllerTest {
 
     @Test
     fun testLaunchModule_loadsModuleIntoModuleLoader() {
-        val module = mock(IModule::class.java)
+        val module = mock(Module::class.java)
         controller.setUp(authenticator)
 
         controller.launchModule(module)
 
         verify(moduleLoader).loadModule(module)
+    }
+
+    @Test
+    fun testGetModules_returnsListFromModuleLoader() {
+        val expectedModules = listOf<Module>(mock(Module::class.java))
+        `when`(moduleLoader.loadedModules).thenReturn(expectedModules)
+        controller.setUp(authenticator)
+
+        val actualModules = controller.getModules()
+
+        assertEquals("Lists item mismatch", expectedModules, actualModules)
     }
 }

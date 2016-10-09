@@ -6,14 +6,18 @@ import org.thederps.module.receiver.DisconnectReceiver
 import org.thederps.tools.AsyncRunner
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent
-import sx.blah.discord.modules.IModule
 import sx.blah.discord.util.DiscordException
 
 /**
  * @author Vidmantas on 2016-10-08.
  */
-class ReconnectModule(val authenticator: Authenticator, val asyncRunner: AsyncRunner) : IModule, DisconnectReceiver {
+class ReconnectModule(
+        val authenticator: Authenticator,
+        val asyncRunner: AsyncRunner
+) : Module, DisconnectReceiver {
     private val log = LoggerFactory.getLogger(ReconnectModule::class.java)
+
+    override val command = ""
 
     override fun getName() = "Reconnect"
 

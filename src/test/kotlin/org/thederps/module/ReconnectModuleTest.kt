@@ -37,15 +37,39 @@ class ReconnectModuleTest {
     }
 
     @Test
-    fun testEnable_registersSelfAsDispatcherListener() {
-        module.enable(client)
+    fun testGetAuthenticator_returnsSetValue() {
+        val actualAuthenticator = module.authenticator
 
-        verify(dispatcher).registerListener(module)
+        Assert.assertSame("Not same", authenticator, actualAuthenticator)
+    }
+
+    @Test
+    fun testGetAsyncRunner_returnsSetValue() {
+        val actualAsyncRunner = module.asyncRunner
+
+        Assert.assertSame("Not same", asyncRunner, actualAsyncRunner)
+    }
+
+    @Test
+    fun testEnable_returnsTrue() {
+        val enabled = module.enable(client)
+
+        Assert.assertTrue("Disabled", enabled)
     }
 
     @Test
     fun testDisable() {
         module.disable()
+    }
+
+    @Test
+    fun testGetCommand_isEmpty() {
+        Assert.assertTrue("Command not empty", module.command.isEmpty())
+    }
+
+    @Test
+    fun testGetDescription_notEmpty() {
+        Assert.assertTrue("Description is empty", !module.description.isEmpty())
     }
 
     @Test

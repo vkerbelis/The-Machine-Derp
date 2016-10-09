@@ -171,6 +171,18 @@ class HelpModuleTest {
         verify(messageBuilder).withCommand(1, listModule.command)
     }
 
+    @Test
+    fun testOnMessage_skipsNonExecutableCommandAppend() {
+        setUpMessagePass()
+        val listModule = mock(Module::class.java)
+        `when`(listModule.command).thenReturn("")
+        val expectedModules = listOf<Module>(listModule)
+        `when`(moduleRetriever.getModules()).thenReturn(expectedModules)
+
+        module.onMessage(messageEvent)
+        verify(messageBuilder, Mockito.times(0)).withCommand(1, listModule.command)
+    }
+
     private fun setUpMessagePass() {
         `when`(message.content).thenReturn(module.command)
         `when`(user.isBot).thenReturn(false)

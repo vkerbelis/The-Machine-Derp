@@ -3,6 +3,7 @@ package org.thederps.module
 import org.thederps.module.receiver.MessageReceiver
 import org.thederps.tools.MessageCreator
 import org.thederps.tools.commandValid
+import org.thederps.tools.hasExecutableCommand
 import org.thederps.tools.withCommand
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventSubscriber
@@ -47,8 +48,10 @@ class HelpModule(
     private fun appendCommands(builder: MessageBuilder) {
         var position = 1
         moduleRetriever.getModules().forEach { module ->
-            builder.withCommand(position, module.command)
-            position++
+            if (module.hasExecutableCommand()) {
+                builder.withCommand(position, module.command)
+                position++
+            }
         }
     }
 }

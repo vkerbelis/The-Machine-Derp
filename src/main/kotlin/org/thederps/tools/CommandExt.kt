@@ -15,3 +15,5 @@ fun Module.commandValid(event: MessageReceivedEvent): Boolean {
 fun MessageBuilder.withCommand(position: Int, command: String) {
     this.withContent(position.toString() + ". " + command + "\n")
 }
+
+fun Module.hasExecutableCommand() = !command.isEmpty()

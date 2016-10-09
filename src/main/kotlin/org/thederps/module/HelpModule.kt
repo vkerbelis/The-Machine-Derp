@@ -2,6 +2,7 @@ package org.thederps.module
 
 import org.thederps.module.receiver.MessageReceiver
 import org.thederps.tools.MessageCreator
+import org.thederps.tools.commandValid
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent
@@ -32,7 +33,7 @@ class HelpModule(val messageCreator: MessageCreator) : IModule, MessageReceiver 
     @EventSubscriber
     override fun onMessage(event: MessageReceivedEvent) {
         val message = event.message
-        if (message.content.startsWith(COMMAND_HELP) && !message.author.isBot) {
+        if (commandValid(event, COMMAND_HELP)) {
             messageCreator.with(event.client)
                     .withChannel(message.channel)
                     .withContent("Welcome to Help")

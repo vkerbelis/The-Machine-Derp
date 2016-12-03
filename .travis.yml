@@ -6,7 +6,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-before_script:
-    - chmod a+x gradlew
+before_install:
+    - chmod +x gradlew
 script:
     - ./gradlew clean check build
